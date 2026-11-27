@@ -1,0 +1,2103 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Majlis Makan Malam KWSP Teluk Intan</title>
+  <!-- Google Fonts for Luxury Editorial & LED Display Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- QR Code Generator Library (Lightweight & Reliable) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+  <style>
+    :root {
+      /* Luxury Evening Gala Palette */
+      --bg-deep: #06140e;
+      --bg-emerald: #0c261b;
+      --bg-card: rgba(13, 36, 26, 0.72);
+      --gold-light: #f9e5a8;
+      --gold: #d4af37;
+      --gold-dark: #997a15;
+      --strawberry: #e63956;
+      --strawberry-glow: #ff6b85;
+      --milk: #fdfaf2;
+      --matcha: #68a325;
+      --matcha-bright: #95d63b;
+      --text-cream: #faf6ed;
+      --text-muted: #b8c4bc;
+      --border-gold: rgba(212, 175, 55, 0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: radial-gradient(circle at 50% 15%, #123828 0%, var(--bg-emerald) 45%, var(--bg-deep) 100%);
+      color: var(--text-cream);
+      height: 100vh;
+      height: 100dvh;
+      max-height: 100dvh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* Ambient Background Canvas (Candlelight Bokeh & Launch Confetti) */
+    #ambient-canvas, #confetti-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+    #ambient-canvas { z-index: 1; }
+    #confetti-canvas { z-index: 900; }
+
+    /* Subtle Gala Spotlights */
+    .spotlight {
+      position: fixed;
+      top: -20%;
+      width: 60vw;
+      height: 80vh;
+      background: radial-gradient(ellipse at center, rgba(212, 175, 55, 0.08) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 1;
+    }
+    .spotlight.left { left: -10%; transform: rotate(-18deg); }
+    .spotlight.right { right: -10%; transform: rotate(18deg); }
+
+    /* ================= CONTROL BAR (Hidden via ?mode=...) ================= */
+    .dev-bar {
+      background: rgba(5, 16, 11, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-gold);
+      padding: 6px 14px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      flex-shrink: 0;
+      z-index: 1000;
+    }
+    .dev-bar.hidden { display: none !important; }
+    .dev-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .dev-label {
+      color: var(--gold-light);
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-right: 4px;
+    }
+    .dev-btn {
+      background: rgba(255, 255, 255, 0.07);
+      color: var(--text-cream);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 6px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 12px;
+      transition: all 0.2s ease;
+    }
+    .dev-btn:hover { background: rgba(212, 175, 55, 0.2); border-color: var(--gold); }
+    .dev-btn.active {
+      background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+      color: #06140e;
+      border-color: var(--gold-light);
+      font-weight: 800;
+    }
+    .dev-btn.reset {
+      background: rgba(230, 57, 86, 0.2);
+      border-color: rgba(230, 57, 86, 0.5);
+      color: #ff9eb0;
+    }
+    .dev-btn.reset:hover { background: var(--strawberry); color: #fff; }
+
+    /* ================= VIEW CONTAINERS ================= */
+    .view {
+      display: none;
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      overflow: hidden;
+      position: relative;
+      z-index: 10;
+      animation: viewFadeSlide 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+    .view.active { display: flex; }
+
+    @keyframes viewFadeSlide {
+      from { opacity: 0; transform: translateY(10px) scale(0.99); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* ================= 1. STAGE LED VIEW ================= */
+    #stage-view {
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-evenly;
+      padding: clamp(8px, 1.8vh, 24px) clamp(12px, 3vw, 28px);
+      gap: clamp(6px, 1.4vh, 18px);
+    }
+
+    .stage-header {
+      text-align: center;
+      max-width: 900px;
+      width: 100%;
+      flex-shrink: 0;
+    }
+    .gala-eyebrow {
+      display: inline-block;
+      font-size: clamp(0.62rem, 1.3vw, 0.76rem);
+      font-weight: 700;
+      letter-spacing: clamp(1.2px, 0.35vw, 3px);
+      text-transform: uppercase;
+      color: var(--gold-light);
+      padding: 4px 12px;
+      border: 1px solid var(--border-gold);
+      border-radius: 99px;
+      background: rgba(212, 175, 55, 0.08);
+      margin-bottom: 4px;
+    }
+    .stage-header h1 {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(1.45rem, 3.8vw, 3.3rem);
+      font-weight: 700;
+      line-height: 1.05;
+      background: linear-gradient(180deg, #ffffff 0%, var(--gold-light) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+    .stage-header p {
+      font-size: clamp(0.78rem, 1.35vw, 1.08rem);
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* Stage Main Arena */
+    .stage-arena {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(16px, 4.5vw, 80px);
+      width: 100%;
+      max-width: 1200px;
+      flex: 1;
+      min-height: 0;
+    }
+
+    /* Cup & Illuminated Pedestal */
+    .cup-pedestal-unit {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding-top: 8px;
+    }
+
+    /* Falling Ingredients Drop Zone */
+    .drop-zone {
+      position: absolute;
+      top: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 240px;
+      height: 100%;
+      pointer-events: none;
+      z-index: 25;
+      overflow: hidden;
+    }
+
+    .falling-ingredient {
+      position: absolute;
+      top: -45px;
+      animation: galaDrop 0.95s cubic-bezier(0.45, 0.05, 0.75, 0.55) forwards;
+      filter: drop-shadow(0 6px 12px rgba(0,0,0,0.4));
+    }
+
+    @keyframes galaDrop {
+      0% { transform: translateY(0) rotate(0deg) scale(1.15); opacity: 1; }
+      75% { opacity: 1; }
+      100% { transform: translateY(390px) rotate(210deg) scale(0.75); opacity: 0; }
+    }
+
+    /* Live Liquid Pour Stream Inside Glass on Tap */
+    .pour-stream {
+      position: absolute;
+      top: 0;
+      width: 12px;
+      height: 88%;
+      border-radius: 0 0 99px 99px;
+      z-index: 20;
+      pointer-events: none;
+      transform-origin: top center;
+      animation: streamFlow 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      filter: blur(0.5px);
+    }
+    @keyframes streamFlow {
+      0% { transform: scaleY(0) scaleX(1.3); opacity: 0.95; }
+      45% { transform: scaleY(1) scaleX(1); opacity: 0.92; }
+      100% { transform: scaleY(1) scaleX(0.2); opacity: 0; }
+    }
+
+    /* Hyper-Detailed Glass Cup */
+    .cup-wrapper {
+      position: relative;
+      width: clamp(180px, 21vw, 275px);
+      height: clamp(250px, 42vh, 395px);
+      z-index: 15;
+    }
+
+    /* Glass Rim Highlight */
+    .cup-rim {
+      position: absolute;
+      top: -8px;
+      left: -4px;
+      right: -4px;
+      height: 18px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.65);
+      background: linear-gradient(180deg, rgba(255,255,255,0.25), rgba(255,255,255,0.05));
+      z-index: 30;
+      box-shadow: 0 2px 10px rgba(255,255,255,0.2);
+    }
+
+    .glass-vessel {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      border-radius: 14px 14px 54px 54px;
+      border: 3px solid rgba(255, 255, 255, 0.45);
+      border-top: none;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.03) 50%, rgba(255, 255, 255, 0.12) 100%);
+      box-shadow:
+        0 30px 60px rgba(0, 0, 0, 0.65),
+        inset 0 0 30px rgba(255, 255, 255, 0.18),
+        inset 12px 0 20px rgba(255, 255, 255, 0.12),
+        inset -12px 0 20px rgba(0, 0, 0, 0.25);
+      overflow: hidden;
+      backdrop-filter: blur(4px);
+    }
+
+    /* Specular Glass Reflection Streak */
+    .glass-reflection {
+      position: absolute;
+      top: 12px;
+      left: 18px;
+      width: 18px;
+      height: 82%;
+      background: linear-gradient(180deg, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.08) 60%, rgba(255,255,255,0.25) 100%);
+      border-radius: 99px;
+      z-index: 25;
+      pointer-events: none;
+    }
+
+    /* Liquid Layers Stack */
+    .liquid-layer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 0%;
+      transition: height 0.45s cubic-bezier(0.22, 1, 0.36, 1), bottom 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+      overflow: visible;
+    }
+
+    #layer-strawberry {
+      z-index: 2;
+      background: linear-gradient(180deg, #ff5c77 0%, #d92648 65%, #a81430 100%);
+      box-shadow: inset 0 6px 14px rgba(255, 160, 175, 0.4);
+    }
+    /* Strawberry seed texture dots */
+    #layer-strawberry::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(rgba(255, 230, 180, 0.35) 1.5px, transparent 1.5px);
+      background-size: 18px 18px;
+      opacity: 0.6;
+    }
+
+    #layer-milk {
+      z-index: 3;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(247, 241, 227, 0.94) 75%, rgba(234, 220, 197, 0.96) 100%);
+      box-shadow: inset 0 6px 12px rgba(255, 255, 255, 0.85), 0 -4px 12px rgba(230, 57, 86, 0.25);
+    }
+
+    #layer-matcha {
+      z-index: 4;
+      background: linear-gradient(180deg, rgba(149, 214, 59, 0.95) 0%, rgba(104, 163, 37, 0.94) 55%, rgba(68, 112, 19, 0.96) 100%);
+      box-shadow: inset 0 6px 14px rgba(200, 255, 120, 0.45), 0 -4px 12px rgba(255, 255, 255, 0.3);
+    }
+
+    /* Animated SVG Wave Top on Liquids */
+    .wave-crest {
+      position: absolute;
+      top: -10px;
+      left: 0;
+      width: 200%;
+      height: 16px;
+      background-repeat: repeat-x;
+      animation: waveSlide 3s linear infinite;
+      opacity: 0.85;
+    }
+    @keyframes waveSlide {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* Floating Ice Cubes inside Cup */
+    .ice-cube {
+      position: absolute;
+      width: 38px;
+      height: 38px;
+      border-radius: 9px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.65), rgba(255,255,255,0.15));
+      border: 1px solid rgba(255,255,255,0.7);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      z-index: 5;
+      opacity: 0;
+      transition: opacity 0.5s ease, bottom 0.5s ease;
+      animation: iceBob 4s ease-in-out infinite;
+    }
+    @keyframes iceBob {
+      0%, 100% { transform: rotate(12deg) translateY(0); }
+      50% { transform: rotate(18deg) translateY(-6px); }
+    }
+
+    /* Swirl Marble Mix State on VIP Launch */
+    .glass-vessel.swirling .liquid-layer {
+      animation: marbleSwirl 1.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+    @keyframes marbleSwirl {
+      0% { transform: scaleX(1) skewX(0deg); filter: blur(0px); }
+      35% { transform: scaleX(1.12) skewX(8deg); filter: blur(5px); }
+      70% { transform: scaleX(0.95) skewX(-6deg); filter: blur(3px); }
+      100% {
+        transform: scaleX(1) skewX(0deg);
+        filter: blur(0px);
+        background: linear-gradient(145deg, #74b72e 0%, #d4e09b 38%, #f8edeb 55%, #f28482 78%, #e63956 100%);
+      }
+    }
+
+    /* Illuminated Stage Pedestal */
+    .stage-pedestal {
+      width: clamp(230px, 26vw, 350px);
+      height: clamp(24px, 3.5vh, 32px);
+      margin-top: -6px;
+      background: linear-gradient(180deg, #1b4332 0%, #081c15 100%);
+      border: 2px solid var(--gold);
+      border-radius: 16px;
+      box-shadow:
+        0 0 35px rgba(149, 214, 59, 0.35),
+        0 18px 40px rgba(0, 0, 0, 0.85),
+        inset 0 2px 8px rgba(249, 229, 168, 0.5);
+      position: relative;
+      z-index: 12;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .stage-pedestal::after {
+      content: 'EDISI KHAS KWSP TELUK INTAN';
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 3px;
+      color: var(--gold-light);
+      opacity: 0.85;
+    }
+
+    /* Luxury Glassmorphism Side Dashboard */
+    .gala-dashboard {
+      background: var(--bg-card);
+      backdrop-filter: blur(18px);
+      border: 1px solid var(--border-gold);
+      border-radius: 24px;
+      padding: clamp(14px, 2.2vh, 28px) clamp(18px, 2.5vw, 30px);
+      width: clamp(260px, 25vw, 330px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      box-shadow:
+        0 25px 50px rgba(0, 0, 0, 0.55),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    }
+
+    .percent-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 2.2px;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+
+    .percent-value {
+      font-size: clamp(2.8rem, 5.5vh, 4.5rem);
+      font-weight: 800;
+      line-height: 1;
+      background: linear-gradient(180deg, #ffffff 10%, var(--matcha-bright) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-variant-numeric: tabular-nums;
+      filter: drop-shadow(0 4px 16px rgba(149, 214, 59, 0.3));
+    }
+
+    .status-pill {
+      margin-top: clamp(8px, 1.4vh, 14px);
+      padding: 6px 16px;
+      border-radius: 99px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      background: rgba(230, 57, 86, 0.18);
+      border: 1px solid rgba(255, 107, 133, 0.45);
+      color: #ff9eb0;
+      transition: all 0.3s ease;
+    }
+
+    .status-pill.ready {
+      background: rgba(149, 214, 59, 0.22);
+      border-color: var(--matcha-bright);
+      color: #d8ff9e;
+      box-shadow: 0 0 25px rgba(149, 214, 59, 0.55);
+      animation: galaPulse 1.4s infinite;
+    }
+
+    /* Ingredient Breakdown Mini Bars */
+    .ingredient-meters {
+      width: 100%;
+      margin-top: clamp(10px, 1.8vh, 18px);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .meter-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .meter-track {
+      flex: 1;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 99px;
+      margin: 0 10px;
+      overflow: hidden;
+    }
+    .meter-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 99px;
+      transition: width 0.35s ease;
+    }
+
+    /* Crisp Auto-Generated QR Card */
+    .qr-box-wrapper {
+      margin-top: clamp(10px, 1.8vh, 18px);
+      padding-top: clamp(10px, 1.8vh, 16px);
+      border-top: 1px solid rgba(212, 175, 55, 0.22);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+    .qr-frame {
+      background: #ffffff;
+      padding: 8px;
+      border-radius: 14px;
+      border: 2px solid var(--gold);
+      box-shadow: 0 0 25px rgba(212, 175, 55, 0.25);
+      width: clamp(92px, 14vh, 132px);
+      height: clamp(92px, 14vh, 132px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .qr-frame svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    .qr-caption {
+      margin-top: 8px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 1.4px;
+      color: var(--gold-light);
+      text-transform: uppercase;
+    }
+
+    /* ================= 2. GUEST CONTROLLER VIEW ================= */
+    #guest-view {
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: clamp(10px, 2vh, 22px) clamp(14px, 4vw, 22px) max(14px, env(safe-area-inset-bottom));
+      width: 100%;
+      max-width: 480px;
+      margin: 0 auto;
+      text-align: center;
+      gap: clamp(8px, 1.5vh, 14px);
+    }
+
+    .guest-header h2 {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(1.45rem, 5.5vw, 1.95rem);
+      line-height: 1.1;
+      color: var(--gold-light);
+      margin-top: 2px;
+    }
+    .guest-header p {
+      font-size: clamp(0.78rem, 3.2vw, 0.9rem);
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+
+    /* Live Mini Progress Ring / Bar for Guest */
+    .guest-live-status {
+      width: 100%;
+      background: var(--bg-card);
+      border: 1px solid var(--border-gold);
+      border-radius: 18px;
+      padding: clamp(10px, 1.6vh, 15px) 16px;
+      backdrop-filter: blur(12px);
+      flex-shrink: 0;
+    }
+    .guest-progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 7px;
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+    .guest-progress-track {
+      width: 100%;
+      height: 10px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .guest-progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--strawberry), var(--gold-light), var(--matcha-bright));
+      background-size: 200% 100%;
+      border-radius: 99px;
+      transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+      animation: progressShimmer 2.5s linear infinite;
+      box-shadow: 0 0 14px rgba(149, 214, 59, 0.45);
+    }
+    @keyframes progressShimmer {
+      0% { background-position: 100% 0; }
+      100% { background-position: -100% 0; }
+    }
+
+    /* Tactile Luxury Pour Buttons */
+    .guest-controls {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: clamp(8px, 1.5vh, 13px);
+      width: 100%;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .pour-btn {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 18px;
+      padding: clamp(10px, 1.8vh, 18px) clamp(14px, 4vw, 20px);
+      color: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      text-align: left;
+      transition: transform 0.14s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+      user-select: none;
+      touch-action: manipulation;
+    }
+    .pour-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 34px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+    }
+    .pour-btn:active {
+      transform: scale(0.95);
+    }
+
+    .btn-strawberry {
+      background: linear-gradient(135deg, #c92a49 0%, #801329 100%);
+      border-color: rgba(255, 133, 161, 0.5);
+    }
+    .btn-milk {
+      background: linear-gradient(135deg, #d8ccb8 0%, #9c8e78 100%);
+      color: #1a1814;
+      border-color: rgba(255, 255, 255, 0.75);
+    }
+    .btn-matcha {
+      background: linear-gradient(135deg, #5d961e 0%, #2d4f0a 100%);
+      border-color: rgba(149, 214, 59, 0.55);
+    }
+
+    .pour-btn-info {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .pour-icon-badge {
+      width: clamp(40px, 11vw, 48px);
+      height: clamp(40px, 11vw, 48px);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .pour-btn:active .pour-icon-badge {
+      transform: scale(1.18) rotate(-8deg);
+    }
+    .btn-milk .pour-icon-badge {
+      background: rgba(26, 24, 20, 0.1);
+    }
+    .pour-title {
+      font-size: clamp(0.98rem, 4vw, 1.12rem);
+      font-weight: 800;
+      display: block;
+    }
+    .pour-sub {
+      font-size: clamp(0.72rem, 3vw, 0.78rem);
+      opacity: 0.85;
+      display: block;
+      margin-top: 2px;
+    }
+    .pour-tap-tag {
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      padding: 6px 12px;
+      border-radius: 99px;
+      background: rgba(0, 0, 0, 0.22);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .btn-milk .pour-tap-tag {
+      background: rgba(26, 24, 20, 0.12);
+    }
+
+    /* Floating "+1 Tuang!" Micro-Feedback on Guest Tap */
+    .floating-plus-one {
+      position: fixed;
+      font-weight: 800;
+      font-size: 1.05rem;
+      color: var(--gold-light);
+      text-shadow: 0 4px 12px rgba(0, 0, 0, 0.75);
+      pointer-events: none;
+      z-index: 950;
+      animation: floatUpFade 0.75s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+    @keyframes floatUpFade {
+      0% { opacity: 1; transform: translate(-50%, 0) scale(0.85); }
+      40% { opacity: 1; transform: translate(-50%, -22px) scale(1.15); }
+      100% { opacity: 0; transform: translate(-50%, -48px) scale(1); }
+    }
+
+    /* Ripple Effect on Tap */
+    .ripple-circle {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.45);
+      transform: scale(0);
+      animation: rippleAnim 0.55s linear;
+      pointer-events: none;
+    }
+    @keyframes rippleAnim {
+      to { transform: scale(4); opacity: 0; }
+    }
+
+    .guest-footer {
+      font-size: 0.82rem;
+      color: var(--gold-light);
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    /* ================= 3. VIP LAUNCH TABLET VIEW ================= */
+    #vip-view {
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-evenly;
+      padding: clamp(14px, 3vh, 28px) 20px;
+      text-align: center;
+      gap: clamp(12px, 2.5vh, 24px);
+    }
+
+    .vip-header h2 {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(1.75rem, 5vw, 3.2rem);
+      line-height: 1.08;
+      color: var(--gold-light);
+      margin-top: 6px;
+    }
+    .vip-header p {
+      color: var(--text-muted);
+      font-size: clamp(0.85rem, 2.2vw, 1.05rem);
+      max-width: 460px;
+      margin: 4px auto 0;
+    }
+
+    .vip-button-outer {
+      position: relative;
+      width: min(62vw, 38vh, 290px);
+      height: min(62vw, 38vh, 290px);
+      border-radius: 50%;
+      padding: 12px;
+      background: linear-gradient(145deg, rgba(212, 175, 55, 0.3), rgba(12, 38, 27, 0.8));
+      border: 2px solid var(--border-gold);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: box-shadow 0.5s ease, transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .vip-button-outer.unlocked-ring {
+      box-shadow: 0 0 70px rgba(212, 175, 55, 0.55), 0 25px 60px rgba(0, 0, 0, 0.8);
+      transform: scale(1.03);
+    }
+
+    #vip-launch-btn {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 4px solid rgba(255, 255, 255, 0.25);
+      background: radial-gradient(circle at 30% 30%, #2b3831, #141c18);
+      color: rgba(255, 255, 255, 0.45);
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(1.35rem, 4.5vw, 1.85rem);
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: not-allowed;
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 18px;
+      touch-action: manipulation;
+    }
+
+    #vip-launch-btn.unlocked {
+      background: radial-gradient(circle at 30% 25%, #f9e5a8 0%, #d4af37 45%, #1b4332 100%);
+      border-color: #ffffff;
+      color: #06140e;
+      cursor: pointer;
+      box-shadow:
+        0 0 60px rgba(212, 175, 55, 0.75),
+        inset 0 0 25px rgba(255, 255, 255, 0.65);
+      animation: galaPulse 1.5s infinite;
+    }
+
+    #vip-launch-btn.unlocked:active {
+      transform: scale(0.94);
+    }
+
+    .vip-sub-label {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      opacity: 0.85;
+    }
+
+    /* ================= FULL-SCREEN GALA LAUNCH OVERLAY ================= */
+    #launch-overlay {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(22, 58, 42, 0.94) 0%, rgba(4, 14, 9, 0.98) 100%);
+      backdrop-filter: blur(18px);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      z-index: 800;
+      padding: 16px;
+      overflow: hidden;
+      perspective: 1400px;
+      animation: overlayReveal 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+    #launch-overlay.show { display: flex; }
+
+    /* Pancaran Cahaya Emas Berputar di Belakang Poster */
+    .gala-sunburst {
+      position: absolute;
+      width: 140vmax;
+      height: 140vmax;
+      background: repeating-conic-gradient(
+        from 0deg,
+        rgba(249, 229, 168, 0.14) 0deg 8deg,
+        transparent 8deg 20deg
+      );
+      animation: rotateSunburst 26s linear infinite, burstFlash 1.2s ease-out forwards;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Gelombang Cahaya (Shockwave Ring) Semasa Pop-Up */
+    .gala-shockwave {
+      position: absolute;
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      border: 4px solid var(--gold-light);
+      box-shadow: 0 0 60px var(--gold), inset 0 0 40px var(--gold-light);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 2;
+      animation: shockwaveExpand 1.3s cubic-bezier(0.16, 1, 0.3, 1) 0.12s forwards;
+    }
+
+    /* Kelopak Bunga Sakura & Kilauan Emas Melayang */
+    .petal-particle {
+      position: absolute;
+      top: -40px;
+      pointer-events: none;
+      z-index: 5;
+      animation: petalFall linear infinite;
+    }
+
+    .poster-reveal-card {
+      position: relative;
+      z-index: 4;
+      max-width: min(92vw, 530px);
+      max-height: 88vh;
+      border-radius: 22px;
+      padding: 6px;
+      background: linear-gradient(135deg, #fff5d6, var(--gold), #b88a1e, #fff5d6);
+      box-shadow:
+        0 0 85px rgba(249, 229, 168, 0.75),
+        0 0 140px rgba(255, 133, 161, 0.35),
+        0 30px 70px rgba(0, 0, 0, 0.9);
+      opacity: 0;
+      transform-style: preserve-3d;
+      animation:
+        posterPopUpSpring 1.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.1s forwards,
+        posterLevitate 4.5s ease-in-out 1.4s infinite;
+      overflow: hidden;
+    }
+
+    .poster-reveal-card img {
+      display: block;
+      width: 100%;
+      height: auto;
+      max-height: calc(88vh - 12px);
+      object-fit: contain;
+      border-radius: 16px;
+    }
+
+    /* Kilauan cahaya lembut melintasi poster selepas muncul */
+    .poster-reveal-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -130%;
+      width: 65%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+      transform: skewX(-24deg);
+      animation: posterShimmer 3.2s ease-in-out 1.1s infinite;
+      pointer-events: none;
+    }
+
+    @keyframes posterPopUpSpring {
+      0% {
+        opacity: 0;
+        transform: scale(0.15) translateY(120px) rotateX(28deg);
+        filter: brightness(2) blur(8px);
+      }
+      55% {
+        opacity: 1;
+        transform: scale(1.06) translateY(-10px) rotateX(-3deg);
+        filter: brightness(1.15) blur(0);
+      }
+      78% {
+        transform: scale(0.98) translateY(3px) rotateX(1deg);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1) translateY(0) rotateX(0deg);
+        filter: brightness(1) blur(0);
+      }
+    }
+
+    @keyframes posterLevitate {
+      0%, 100% {
+        transform: translateY(0) scale(1);
+        box-shadow: 0 0 75px rgba(249, 229, 168, 0.7), 0 30px 70px rgba(0, 0, 0, 0.9);
+      }
+      50% {
+        transform: translateY(-8px) scale(1.012);
+        box-shadow: 0 0 110px rgba(249, 229, 168, 0.95), 0 0 150px rgba(255, 133, 161, 0.45), 0 38px 80px rgba(0, 0, 0, 0.95);
+      }
+    }
+
+    @keyframes rotateSunburst {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes burstFlash {
+      0% { opacity: 0; transform: scale(0.4) rotate(0deg); }
+      40% { opacity: 1; }
+      100% { opacity: 0.75; transform: scale(1) rotate(18deg); }
+    }
+
+    @keyframes shockwaveExpand {
+      0% { opacity: 0.95; transform: scale(0.3); }
+      100% { opacity: 0; transform: scale(6.5); }
+    }
+
+    @keyframes petalFall {
+      0% { transform: translateY(-40px) translateX(0) rotate(0deg); opacity: 0; }
+      15% { opacity: 0.95; }
+      85% { opacity: 0.9; }
+      100% { transform: translateY(108vh) translateX(60px) rotate(360deg); opacity: 0; }
+    }
+
+    @keyframes posterShimmer {
+      0% { left: -130%; }
+      45%, 100% { left: 165%; }
+    }
+
+    @keyframes galaPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.04); }
+    }
+    @keyframes overlayReveal {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 820px) {
+      .dev-bar {
+        justify-content: center;
+        padding: 5px 8px;
+      }
+      .dev-btn {
+        padding: 5px 8px;
+        font-size: 11px;
+      }
+      .stage-header p {
+        display: none;
+      }
+      .stage-arena {
+        flex-direction: column;
+        gap: clamp(8px, 1.5vh, 14px);
+      }
+      .cup-pedestal-unit {
+        padding-top: 4px;
+      }
+      .drop-zone {
+        width: 160px;
+        height: 230px;
+      }
+      .cup-wrapper {
+        width: clamp(125px, 28vw, 165px);
+        height: clamp(175px, 26vh, 230px);
+      }
+      .stage-pedestal {
+        width: clamp(175px, 38vw, 220px);
+        height: 22px;
+      }
+      .gala-dashboard {
+        width: 100%;
+        max-width: 390px;
+        padding: 12px 14px;
+        border-radius: 20px;
+      }
+      .percent-value {
+        font-size: clamp(2.2rem, 4.5vh, 3rem);
+      }
+      .status-pill {
+        margin-top: 6px;
+        padding: 4px 12px;
+        font-size: 0.72rem;
+      }
+      .ingredient-meters {
+        margin-top: 8px;
+        gap: 4px;
+      }
+      .qr-box-wrapper {
+        flex-direction: row;
+        justify-content: center;
+        text-align: left;
+        gap: 12px;
+        margin-top: 10px;
+        padding-top: 10px;
+      }
+      .qr-frame {
+        width: 68px;
+        height: 68px;
+        padding: 5px;
+        flex-shrink: 0;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .pour-tap-tag {
+        display: none;
+      }
+      .pour-btn {
+        padding: 10px 12px;
+      }
+      .pour-sub {
+        display: none;
+      }
+    }
+
+    /* Landscape phones / compact height tablets */
+    @media (max-height: 600px) and (orientation: landscape) {
+      #stage-view {
+        padding: 6px 16px;
+        gap: 6px;
+      }
+      .stage-header p {
+        display: none;
+      }
+      .stage-arena {
+        flex-direction: row;
+        gap: 20px;
+      }
+      .cup-wrapper {
+        width: 135px;
+        height: 190px;
+      }
+      .stage-pedestal {
+        width: 175px;
+        height: 20px;
+      }
+      .gala-dashboard {
+        padding: 10px 14px;
+        width: 265px;
+      }
+      .qr-frame {
+        width: 64px;
+        height: 64px;
+        padding: 4px;
+      }
+      #guest-view {
+        padding: 8px 16px;
+        gap: 6px;
+      }
+      .guest-header p {
+        display: none;
+      }
+      .guest-controls {
+        flex-direction: row;
+        gap: 10px;
+      }
+      .pour-btn {
+        flex: 1;
+        flex-direction: column;
+        text-align: center;
+        padding: 10px 8px;
+      }
+      .pour-btn-info {
+        flex-direction: column;
+        gap: 6px;
+      }
+      .pour-tap-tag, .pour-sub {
+        display: none;
+      }
+      .vip-button-outer {
+        width: 175px;
+        height: 175px;
+        padding: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient Gala Spotlights & Particle Canvases -->
+  <div class="spotlight left"></div>
+  <div class="spotlight right"></div>
+  <canvas id="ambient-canvas"></canvas>
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- Event Control Bar (Automatically hidden if ?mode=stage, ?mode=guest, or ?mode=vip is in URL) -->
+  <header class="dev-bar" id="dev-bar">
+    <div class="dev-group">
+      <span class="dev-label">Kawalan Majlis:</span>
+      <button class="dev-btn active" id="tab-stage" onclick="switchView('stage')">Stage LED</button>
+      <button class="dev-btn" id="tab-guest" onclick="switchView('guest')">Telefon Tetamu</button>
+      <button class="dev-btn" id="tab-vip" onclick="switchView('vip')">Tablet VIP</button>
+    </div>
+    <div class="dev-group">
+      <button class="dev-btn" id="sound-toggle-btn" onclick="toggleSound()">🔊 Bunyi: AKTIF</button>
+      <button class="dev-btn" onclick="simulateCrowd()">⚡ Demo Auto-Isi</button>
+      <button class="dev-btn reset" onclick="resetEvent()">↺ Set Semula</button>
+    </div>
+  </header>
+
+  <!-- ================= 1. STAGE LED VIEW ================= -->
+  <main id="stage-view" class="view active">
+    <div class="stage-header">
+      <span class="gala-eyebrow">Majlis Makan Malam KWSP Teluk Intan</span>
+      <h1>Cipta Minuman Istimewa Malam Ini</h1>
+      <p>Imbas kod QR di meja anda & tekan butang untuk menuang bahan ke dalam gelas utama</p>
+    </div>
+
+    <div class="stage-arena">
+      <!-- Center Illuminated Glass Chalice -->
+      <div class="cup-pedestal-unit">
+        <div class="drop-zone" id="drop-zone"></div>
+
+        <div class="cup-wrapper">
+          <div class="cup-rim"></div>
+          <div class="glass-vessel" id="cup-vessel">
+            <div class="glass-reflection"></div>
+
+            <!-- Floating Ice Cubes -->
+            <div class="ice-cube" id="ice-1" style="left: 24%; bottom: 18%;"></div>
+            <div class="ice-cube" id="ice-2" style="right: 22%; bottom: 26%; animation-delay: 1.2s;"></div>
+            <div class="ice-cube" id="ice-3" style="left: 42%; bottom: 34%; animation-delay: 2.3s;"></div>
+
+            <!-- Layered Liquids -->
+            <div class="liquid-layer" id="layer-matcha">
+              <svg class="wave-crest" viewBox="0 0 1200 28" preserveAspectRatio="none">
+                <path d="M0,14 C150,28 350,0 600,14 C850,28 1050,0 1200,14 L1200,28 L0,28 Z" fill="#95d63b"></path>
+              </svg>
+            </div>
+            <div class="liquid-layer" id="layer-milk">
+              <svg class="wave-crest" viewBox="0 0 1200 28" preserveAspectRatio="none">
+                <path d="M0,14 C200,0 400,28 600,14 C800,0 1000,28 1200,14 L1200,28 L0,28 Z" fill="#ffffff"></path>
+              </svg>
+            </div>
+            <div class="liquid-layer" id="layer-strawberry">
+              <svg class="wave-crest" viewBox="0 0 1200 28" preserveAspectRatio="none">
+                <path d="M0,14 C180,26 420,2 600,14 C780,26 1020,2 1200,14 L1200,28 L0,28 Z" fill="#ff5c77"></path>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="stage-pedestal"></div>
+      </div>
+
+      <!-- Luxury Side Telemetry & QR Panel -->
+      <aside class="gala-dashboard">
+        <span class="percent-label">Tahap Campuran</span>
+        <div class="percent-value" id="stage-percent">0%</div>
+        <div class="status-pill" id="stage-status">MENUNGGU TETAMU...</div>
+
+        <!-- Ingredient Level Breakdown -->
+        <div class="ingredient-meters">
+          <div class="meter-row">
+            <span>Matcha</span>
+            <div class="meter-track"><div class="meter-fill" id="meter-matcha" style="background: var(--matcha-bright);"></div></div>
+            <span id="val-matcha">0%</span>
+          </div>
+          <div class="meter-row">
+            <span>Susu & Ais</span>
+            <div class="meter-track"><div class="meter-fill" id="meter-milk" style="background: var(--milk);"></div></div>
+            <span id="val-milk">0%</span>
+          </div>
+          <div class="meter-row">
+            <span>Strawberi</span>
+            <div class="meter-track"><div class="meter-fill" id="meter-strawberry" style="background: var(--strawberry-glow);"></div></div>
+            <span id="val-strawberry">0%</span>
+          </div>
+        </div>
+
+        <!-- Auto-Generated Crisp SVG QR Code -->
+        <div class="qr-box-wrapper">
+          <div class="qr-frame" id="qr-container" title="Imbas untuk sertai sebagai Tetamu"></div>
+          <div>
+            <div class="qr-caption">IMBAS UNTUK TUANG</div>
+            <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 2px;">Sertai secara langsung dari telefon anda</div>
+            <div id="sync-status-badge" style="font-size: 0.68rem; color: #95d63b; margin-top: 6px; font-weight: 700;">● MOD OFFLINE / LOKAL</div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <!-- ================= 2. GUEST MOBILE VIEW ================= -->
+  <section id="guest-view" class="view">
+    <div class="guest-header">
+      <span class="gala-eyebrow">Majlis Makan Malam KWSP Teluk Intan</span>
+      <h2>Minuman Istimewa Malam Ini</h2>
+      <p>Tekan bahan di bawah untuk menuang terus ke layar pentas utama!</p>
+    </div>
+
+    <div class="guest-live-status">
+      <div class="guest-progress-header">
+        <span style="color: var(--gold-light);">Kemajuan Gelas Utama</span>
+        <span id="guest-percent" style="color: var(--matcha-bright);">0%</span>
+      </div>
+      <div class="guest-progress-track">
+        <div class="guest-progress-fill" id="guest-progress-bar"></div>
+      </div>
+    </div>
+
+    <div class="guest-controls">
+      <!-- Button 1: Strawberry Puree -->
+      <button class="pour-btn btn-strawberry" onclick="handleGuestPour(event, 'strawberry')">
+        <div class="pour-btn-info">
+          <div class="pour-icon-badge">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22c4.5-2.5 7-6.5 7-11a7 7 0 0 0-14 0c0 4.5 2.5 8.5 7 11z"/>
+              <path d="M12 4c-1.5-2-4-2-5-1 1.5 1 3 1 5 1zm0 0c1.5-2 4-2 5-1-1.5 1-3 1-5 1z"/>
+            </svg>
+          </div>
+          <div>
+            <span class="pour-title">Tuang Puri Strawberi</span>
+            <span class="pour-sub">Puri buah strawberi segar pilihan</span>
+          </div>
+        </div>
+        <span class="pour-tap-tag">+ Tuang</span>
+      </button>
+
+      <!-- Button 2: Fresh Milk & Ice -->
+      <button class="pour-btn btn-milk" onclick="handleGuestPour(event, 'milk')">
+        <div class="pour-btn-info">
+          <div class="pour-icon-badge">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1a1814" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="4" y="4" width="16" height="16" rx="4"/>
+              <path d="M9 9h6v6H9z"/>
+            </svg>
+          </div>
+          <div>
+            <span class="pour-title">Tuang Susu Segar</span>
+            <span class="pour-sub">Susu berkrim dingin bersama kiub ais</span>
+          </div>
+        </div>
+        <span class="pour-tap-tag">+ Tuang</span>
+      </button>
+
+      <!-- Button 3: Ceremonial Matcha -->
+      <button class="pour-btn btn-matcha" onclick="handleGuestPour(event, 'matcha')">
+        <div class="pour-btn-info">
+          <div class="pour-icon-badge">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
+            </svg>
+          </div>
+          <div>
+            <span class="pour-title">Tuang Matcha Premium</span>
+            <span class="pour-sub">Teh hijau matcha gred istimewa</span>
+          </div>
+        </div>
+        <span class="pour-tap-tag">+ Tuang</span>
+      </button>
+    </div>
+
+    <div class="guest-footer">
+      Sumbangan Tuangan Anda: <strong id="personal-pours">0</strong> Kali
+    </div>
+  </section>
+
+  <!-- ================= 3. VIP LAUNCH TABLET VIEW ================= -->
+  <section id="vip-view" class="view">
+    <div class="vip-header">
+      <span class="gala-eyebrow">Konsol Tetamu Kehormat</span>
+      <h2>Pelancaran Rasmi Majlis</h2>
+      <p id="vip-instruction">Menunggu para tetamu memenuhi minuman istimewa sehingga 100%...</p>
+    </div>
+
+    <div class="vip-button-outer">
+      <button id="vip-launch-btn" onclick="triggerVipLaunch()" disabled>
+        <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+        </svg>
+        <span id="vip-btn-text">Dikunci</span>
+        <span class="vip-sub-label" id="vip-btn-sub">0% Diisi</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ================= FULL-SCREEN OFFICIAL LAUNCH OVERLAY ================= -->
+  <div id="launch-overlay">
+    <div class="gala-sunburst"></div>
+    <div class="gala-shockwave"></div>
+    <div id="petal-container"></div>
+
+    <div class="poster-reveal-card">
+      <img
+        id="launch-poster-img"
+        src="gimmick/image/poster.jpg"
+        alt="Majlis Makan Malam & Apresiasi KWSP Teluk Intan - Sentuhan Matcha & Pesona Strawberry"
+        onerror="this.onerror=null; this.src='https://placehold.co/768x1024/fdf0f2/4f5d2f?text=Majlis+Makan+Malam+%26+Apresiasi+KWSP+Teluk+Intan';"
+      />
+    </div>
+  </div>
+
+  <script>
+    /* ================= KONFIGURASI FIREBASE REALTIME (UNTUK LIVE EVENT) ================= */
+    const FIREBASE_DB_URL = "https://gimmick-event-default-rtdb.firebaseio.com";
+
+    /* ================= CONFIGURATION & STATE ================= */
+    const STORAGE_KEY = 'kwsp_teluk_intan_gala_state_v1';
+    const CHANNEL_NAME = 'kwsp_teluk_intan_gala_channel';
+    const GOAL_TAPS = 120; // Jumlah keseluruhan tap untuk capai 100%
+
+    let state = {
+      strawberry: 0,
+      milk: 0,
+      matcha: 0,
+      launched: false,
+      lastPour: null,
+      lastPourId: 0
+    };
+
+    let personalPours = 0;
+    let soundEnabled = true;
+    let audioCtx = null;
+    let demoInterval = null;
+    let lastSeenPourId = 0;
+    let displayedPercent = 0;
+    let percentAnimFrame = null;
+
+    // Cross-tab realtime sync channel (untuk ujian di komputer yang sama)
+    const syncChannel = ('BroadcastChannel' in window) ? new BroadcastChannel(CHANNEL_NAME) : null;
+    const isCloudEnabled = Boolean(FIREBASE_DB_URL && FIREBASE_DB_URL.trim().startsWith('http'));
+    const cleanDbUrl = isCloudEnabled ? FIREBASE_DB_URL.trim().replace(/\/+$/, '') : '';
+
+    function initAudio() {
+      if (!audioCtx && (window.AudioContext || window.webkitAudioContext)) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContextClass();
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      const btn = document.getElementById('sound-toggle-btn');
+      btn.textContent = soundEnabled ? '🔊 Bunyi: AKTIF' : '🔇 Bunyi: SENYAP';
+      if (soundEnabled) initAudio();
+    }
+
+    function playPourSound(type) {
+      if (!soundEnabled) return;
+      try {
+        initAudio();
+        if (!audioCtx) return;
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        const baseFreq = type === 'strawberry' ? 360 : type === 'milk' ? 440 : 540;
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(baseFreq, now);
+        osc.frequency.exponentialRampToValueAtTime(baseFreq * 1.45, now + 0.14);
+
+        gain.gain.setValueAtTime(0.14, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(now);
+        osc.stop(now + 0.16);
+      } catch (e) {}
+    }
+
+    function playReadyChime() {
+      if (!soundEnabled) return;
+      try {
+        initAudio();
+        if (!audioCtx) return;
+        const notes = [523.25, 659.25, 783.99, 1046.5];
+        notes.forEach((freq, i) => {
+          const now = audioCtx.currentTime + i * 0.09;
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, now);
+          gain.gain.setValueAtTime(0.18, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now);
+          osc.stop(now + 0.5);
+        });
+      } catch (e) {}
+    }
+
+    function playLaunchFanfare() {
+      if (!soundEnabled) return;
+      try {
+        initAudio();
+        if (!audioCtx) return;
+        const chord = [261.63, 329.63, 392.00, 523.25, 659.25, 783.99];
+        chord.forEach((freq) => {
+          const now = audioCtx.currentTime;
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(freq, now);
+
+          const filter = audioCtx.createBiquadFilter();
+          filter.type = 'lowpass';
+          filter.frequency.setValueAtTime(1800, now);
+
+          gain.gain.setValueAtTime(0.08, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 1.8);
+
+          osc.connect(filter);
+          filter.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now);
+          osc.stop(now + 1.8);
+        });
+      } catch (e) {}
+    }
+
+    /* ================= STATE SYNC & PERSISTENCE ================= */
+    function updateSyncBadge(text, color) {
+      const badge = document.getElementById('sync-status-badge');
+      if (badge) {
+        badge.textContent = text;
+        badge.style.color = color;
+      }
+    }
+
+    function loadState() {
+      if (isCloudEnabled) {
+        updateSyncBadge('● MENYAMBUNG KE CLOUD LIVE...', '#f9e5a8');
+        startCloudListener();
+        return;
+      }
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          state = { ...state, ...parsed };
+        }
+      } catch (e) {}
+    }
+
+    // Sambungan Live ke Firebase Realtime Database (REST + SSE / Polling pantas)
+    function startCloudListener() {
+      const endpoint = `${cleanDbUrl}/kwsp_gala_event.json`;
+
+      // Cuba guna Server-Sent Events (SSE) untuk kemas kini serta-merta tanpa lengah
+      if ('EventSource' in window) {
+        try {
+          const evtSource = new EventSource(endpoint);
+          evtSource.onopen = () => {
+            updateSyncBadge('● LIVE CLOUD AKTIF (SEMUA TELEFON)', '#95d63b');
+          };
+          const handleStream = (e) => {
+            if (!e.data) return;
+            const payload = JSON.parse(e.data);
+            if (payload && payload.data) {
+              applyCloudData(payload.data);
+            }
+          };
+          evtSource.addEventListener('put', handleStream);
+          evtSource.addEventListener('patch', handleStream);
+          evtSource.onerror = () => {
+            updateSyncBadge('● LIVE SYNC (AUTO-RECONNECT)', '#f9e5a8');
+          };
+        } catch (err) {}
+      }
+
+      // Sandaran polling setiap 1 saat sekiranya rangkaian dewan tidak menyokong SSE
+      setInterval(async () => {
+        try {
+          const res = await fetch(endpoint);
+          if (res.ok) {
+            const data = await res.json();
+            if (data) applyCloudData(data);
+          }
+        } catch (e) {}
+      }, 1000);
+    }
+
+    function applyCloudData(cloudState) {
+      const prevTotal = getTotalPercent();
+      state = {
+        strawberry: Number(cloudState.strawberry || 0),
+        milk: Number(cloudState.milk || 0),
+        matcha: Number(cloudState.matcha || 0),
+        launched: Boolean(cloudState.launched),
+        lastPour: cloudState.lastPour || null,
+        lastPourId: Number(cloudState.lastPourId || 0)
+      };
+
+      // Mainkan animasi bahan jatuh apabila tetamu lain menuang dari telefon mereka
+      if (state.lastPour && state.lastPourId > lastSeenPourId) {
+        lastSeenPourId = state.lastPourId;
+        spawnFallingIngredient(state.lastPour);
+        playPourSound(state.lastPour);
+      }
+
+      updateUI(prevTotal);
+    }
+
+    async function pushCloudIncrement(type) {
+      const pourId = Date.now() + Math.floor(Math.random() * 1000);
+      lastSeenPourId = pourId;
+      try {
+        // Baca nilai semasa atau hantar kemas kini atomik melalui PATCH
+        const res = await fetch(`${cleanDbUrl}/kwsp_gala_event.json`);
+        const current = (res.ok ? await res.json() : null) || { strawberry: 0, milk: 0, matcha: 0, launched: false };
+        if (current.launched) return;
+
+        const updated = {
+          ...current,
+          [type]: Number(current[type] || 0) + 1,
+          lastPour: type,
+          lastPourId: pourId
+        };
+
+        await fetch(`${cleanDbUrl}/kwsp_gala_event.json`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updated)
+        });
+      } catch (e) {}
+    }
+
+    async function saveAndBroadcast(latestPourType = null) {
+      if (isCloudEnabled) {
+        try {
+          await fetch(`${cleanDbUrl}/kwsp_gala_event.json`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(state)
+          });
+        } catch (e) {}
+        return;
+      }
+
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch (e) {}
+      if (syncChannel) {
+        syncChannel.postMessage({ type: 'SYNC_STATE', state, latestPourType });
+      }
+    }
+
+    if (syncChannel) {
+      syncChannel.onmessage = (event) => {
+        if (event.data && event.data.type === 'SYNC_STATE') {
+          const prevTotal = getTotalPercent();
+          state = event.data.state;
+          if (event.data.latestPourType) {
+            spawnFallingIngredient(event.data.latestPourType);
+          }
+          updateUI(prevTotal);
+        }
+      };
+    }
+
+    window.addEventListener('storage', (e) => {
+      if (e.key === STORAGE_KEY && e.newValue) {
+        const prevTotal = getTotalPercent();
+        state = JSON.parse(e.newValue);
+        updateUI(prevTotal);
+      }
+    });
+
+    function getTotalPercent() {
+      const totalTaps = state.strawberry + state.milk + state.matcha;
+      return Math.min(100, Math.round((totalTaps / GOAL_TAPS) * 100));
+    }
+
+    /* ================= INTERACTIONS ================= */
+    function triggerHaptic(pattern = 18) {
+      try {
+        if (navigator.vibrate) navigator.vibrate(pattern);
+      } catch (e) {}
+    }
+
+    function spawnFloatingPlusOne(x, y, type) {
+      const tag = document.createElement('div');
+      tag.className = 'floating-plus-one';
+      const labels = {
+        strawberry: '+1 Strawberi!',
+        milk: '+1 Susu Segar!',
+        matcha: '+1 Matcha!'
+      };
+      tag.textContent = labels[type] || '+1 Tuang!';
+      tag.style.left = `${x}px`;
+      tag.style.top = `${y - 12}px`;
+      document.body.appendChild(tag);
+      setTimeout(() => tag.remove(), 760);
+    }
+
+    function handleGuestPour(event, type) {
+      initAudio();
+      triggerHaptic(18);
+
+      // Ripple & Floating "+1" visual feedback
+      if (event && event.currentTarget) {
+        const btn = event.currentTarget;
+        const rect = btn.getBoundingClientRect();
+        const tapX = event.clientX || (rect.left + rect.width / 2);
+        const tapY = event.clientY || (rect.top + rect.height / 2);
+
+        const circle = document.createElement('span');
+        const diameter = Math.max(rect.width, rect.height);
+        circle.style.width = circle.style.height = `${diameter}px`;
+        circle.style.left = `${tapX - rect.left - diameter / 2}px`;
+        circle.style.top = `${tapY - rect.top - diameter / 2}px`;
+        circle.classList.add('ripple-circle');
+        btn.appendChild(circle);
+        setTimeout(() => circle.remove(), 600);
+
+        spawnFloatingPlusOne(tapX, tapY, type);
+      }
+
+      const prevTotal = getTotalPercent();
+      if (prevTotal < 100 && !state.launched) {
+        state[type] += 1;
+        personalPours += 1;
+        document.getElementById('personal-pours').textContent = personalPours;
+        playPourSound(type);
+        spawnFallingIngredient(type);
+
+        if (isCloudEnabled) {
+          pushCloudIncrement(type);
+        } else {
+          saveAndBroadcast(type);
+        }
+        updateUI(prevTotal);
+      } else {
+        playPourSound(type);
+      }
+    }
+
+    function spawnFallingIngredient(type) {
+      const dropZone = document.getElementById('drop-zone');
+      if (dropZone) {
+        const el = document.createElement('div');
+        el.className = 'falling-ingredient';
+        el.style.left = `${15 + Math.random() * 70}%`;
+
+        if (type === 'strawberry') {
+          el.innerHTML = `<svg width="30" height="30" viewBox="0 0 24 24" fill="#ff4d6d"><path d="M12 22c4.5-2.5 7-6.5 7-11a7 7 0 0 0-14 0c0 4.5 2.5 8.5 7 11z"/><path d="M9 4c1.5 1 3 1 3 1s1.5 0 3-1" stroke="#74c69d" stroke-width="2" fill="none"/></svg>`;
+        } else if (type === 'milk') {
+          el.innerHTML = `<svg width="28" height="28" viewBox="0 0 24 24" fill="rgba(255,255,255,0.85)" stroke="#d8f3dc" stroke-width="1.5"><rect x="4" y="4" width="16" height="16" rx="4"/></svg>`;
+        } else {
+          el.innerHTML = `<svg width="30" height="30" viewBox="0 0 24 24" fill="#95d63b"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>`;
+        }
+
+        dropZone.appendChild(el);
+        setTimeout(() => el.remove(), 950);
+      }
+
+      // Live Liquid Pour Stream inside the Stage Glass Vessel
+      const vessel = document.getElementById('cup-vessel');
+      if (vessel && !state.launched) {
+        const stream = document.createElement('div');
+        stream.className = 'pour-stream';
+        stream.style.left = `${22 + Math.random() * 52}%`;
+        stream.style.background =
+          type === 'strawberry'
+            ? 'linear-gradient(180deg, rgba(255,92,119,0.95), rgba(217,38,72,0.2))'
+            : type === 'milk'
+            ? 'linear-gradient(180deg, rgba(255,255,255,0.95), rgba(247,241,227,0.2))'
+            : 'linear-gradient(180deg, rgba(149,214,59,0.95), rgba(104,163,37,0.2))';
+        vessel.appendChild(stream);
+        setTimeout(() => stream.remove(), 560);
+      }
+    }
+
+    function triggerVipLaunch() {
+      if (getTotalPercent() < 100 || state.launched) return;
+      initAudio();
+      triggerHaptic([60, 40, 120]);
+      state.launched = true;
+      saveAndBroadcast();
+      updateUI(100);
+    }
+
+    function animatePercentDisplay(targetPercent) {
+      if (percentAnimFrame) cancelAnimationFrame(percentAnimFrame);
+      const stageEl = document.getElementById('stage-percent');
+      const guestEl = document.getElementById('guest-percent');
+
+      function step() {
+        const diff = targetPercent - displayedPercent;
+        if (Math.abs(diff) < 0.5) {
+          displayedPercent = targetPercent;
+        } else {
+          displayedPercent += diff * 0.22;
+        }
+        const rounded = Math.round(displayedPercent);
+        if (stageEl) stageEl.textContent = `${rounded}%`;
+        if (guestEl) guestEl.textContent = `${rounded}%`;
+
+        if (displayedPercent !== targetPercent) {
+          percentAnimFrame = requestAnimationFrame(step);
+        }
+      }
+      percentAnimFrame = requestAnimationFrame(step);
+    }
+
+    function simulateCrowd() {
+      if (demoInterval) {
+        clearInterval(demoInterval);
+        demoInterval = null;
+        return;
+      }
+      initAudio();
+      const types = ['strawberry', 'milk', 'matcha'];
+      demoInterval = setInterval(() => {
+        if (getTotalPercent() >= 100) {
+          clearInterval(demoInterval);
+          demoInterval = null;
+          return;
+        }
+        const pick = types[Math.floor(Math.random() * types.length)];
+        const prevTotal = getTotalPercent();
+        state[pick] += 2;
+        spawnFallingIngredient(pick);
+        playPourSound(pick);
+        saveAndBroadcast(pick);
+        updateUI(prevTotal);
+      }, 110);
+    }
+
+    function resetEvent() {
+      if (demoInterval) {
+        clearInterval(demoInterval);
+        demoInterval = null;
+      }
+      state = { strawberry: 0, milk: 0, matcha: 0, launched: false };
+      personalPours = 0;
+      document.getElementById('personal-pours').textContent = '0';
+      document.getElementById('cup-vessel').classList.remove('swirling');
+      document.getElementById('launch-overlay').classList.remove('show');
+      stopConfetti();
+      saveAndBroadcast();
+      updateUI(0);
+    }
+
+    /* ================= UI RENDERING ================= */
+    function updateUI(prevTotal = 0) {
+      const total = getTotalPercent();
+      const sumTaps = Math.max(1, state.strawberry + state.milk + state.matcha);
+
+      // Play chime the instant it reaches 100%
+      if (prevTotal < 100 && total >= 100 && !state.launched) {
+        playReadyChime();
+        triggerHaptic([40, 30, 80]);
+      }
+
+      // Smooth 60fps rolling percentage counter
+      animatePercentDisplay(total);
+      const statusBadge = document.getElementById('stage-status');
+      if (state.launched) {
+        statusBadge.textContent = 'MINUMAN ISTIMEWA DILANCARKAN!';
+        statusBadge.classList.add('ready');
+      } else if (total >= 100) {
+        statusBadge.textContent = 'SEDIA DILANCARKAN!';
+        statusBadge.classList.add('ready');
+      } else {
+        statusBadge.textContent = total === 0 ? 'MENUNGGU TETAMU...' : 'SEDANG DITUANG...';
+        statusBadge.classList.remove('ready');
+      }
+
+      // Ingredient Breakdown Bars
+      const sShare = state.strawberry + state.milk + state.matcha === 0 ? 0 : Math.round((state.strawberry / sumTaps) * 100);
+      const mShare = state.strawberry + state.milk + state.matcha === 0 ? 0 : Math.round((state.milk / sumTaps) * 100);
+      const gShare = state.strawberry + state.milk + state.matcha === 0 ? 0 : Math.max(0, 100 - sShare - mShare);
+
+      document.getElementById('meter-strawberry').style.width = `${sShare}%`;
+      document.getElementById('val-strawberry').textContent = `${sShare}%`;
+      document.getElementById('meter-milk').style.width = `${mShare}%`;
+      document.getElementById('val-milk').textContent = `${mShare}%`;
+      document.getElementById('meter-matcha').style.width = `${gShare}%`;
+      document.getElementById('val-matcha').textContent = `${gShare}%`;
+
+      // Update Liquid Layer Heights inside Glass Vessel (Max visual fill 90%)
+      // Setiap lapisan bertingkat secara berasingan supaya merah, putih, dan hijau sentiasa jelas kelihatan
+      const visualFill = (total / 100) * 90;
+      const sHeight = visualFill * (sShare / 100);
+      const mHeight = visualFill * (mShare / 100);
+      const gHeight = visualFill * (gShare / 100);
+
+      const sLayer = document.getElementById('layer-strawberry');
+      const mLayer = document.getElementById('layer-milk');
+      const gLayer = document.getElementById('layer-matcha');
+
+      sLayer.style.bottom = '0%';
+      sLayer.style.height = `${sHeight}%`;
+
+      mLayer.style.bottom = `${sHeight}%`;
+      mLayer.style.height = `${mHeight}%`;
+
+      gLayer.style.bottom = `${sHeight + mHeight}%`;
+      gLayer.style.height = `${gHeight}%`;
+
+      // Show floating ice cubes once milk/liquid rises
+      const iceOpacity = total > 15 ? '1' : '0';
+      ['ice-1', 'ice-2', 'ice-3'].forEach((id, idx) => {
+        const cube = document.getElementById(id);
+        if (cube) {
+          cube.style.opacity = iceOpacity;
+          cube.style.bottom = `${Math.min(72, Math.max(14, visualFill * (0.45 + idx * 0.16)))}%`;
+        }
+      });
+
+      // Update Guest Progress Bar
+      document.getElementById('guest-progress-bar').style.width = `${total}%`;
+
+      // Update VIP Console
+      const vipOuter = document.querySelector('.vip-button-outer');
+      const vipBtn = document.getElementById('vip-launch-btn');
+      const vipText = document.getElementById('vip-btn-text');
+      const vipSub = document.getElementById('vip-btn-sub');
+      const vipInstr = document.getElementById('vip-instruction');
+
+      if (state.launched) {
+        if (vipOuter) vipOuter.classList.add('unlocked-ring');
+        vipBtn.classList.add('unlocked');
+        vipBtn.disabled = false;
+        vipText.textContent = 'Dilancarkan';
+        vipSub.textContent = 'Majlis Bermula';
+        vipInstr.textContent = 'Minuman istimewa Majlis Makan Malam KWSP Teluk Intan telah rasmi dilancarkan!';
+      } else if (total >= 100) {
+        if (vipOuter) vipOuter.classList.add('unlocked-ring');
+        vipBtn.classList.add('unlocked');
+        vipBtn.disabled = false;
+        vipText.textContent = 'LANCARKAN SEKARANG';
+        vipSub.textContent = 'Tekan Untuk Merasmikan';
+        vipInstr.textContent = 'Gelas telah penuh 100%! Tekan emblem emas untuk melancarkan majlis.';
+      } else {
+        if (vipOuter) vipOuter.classList.remove('unlocked-ring');
+        vipBtn.classList.remove('unlocked');
+        vipBtn.disabled = true;
+        vipText.textContent = 'Dikunci';
+        vipSub.textContent = `${total}% Diisi`;
+        vipInstr.textContent = 'Menunggu para tetamu memenuhi minuman istimewa sehingga 100%...';
+      }
+
+      // Handle Grand Finale Launch State
+      const vessel = document.getElementById('cup-vessel');
+      const overlay = document.getElementById('launch-overlay');
+      if (state.launched) {
+        if (!vessel.classList.contains('swirling')) {
+          vessel.classList.add('swirling');
+          playLaunchFanfare();
+          setTimeout(() => {
+            overlay.classList.add('show');
+            spawnSakuraPetals();
+            startConfetti();
+          }, 1100);
+        } else if (!overlay.classList.contains('show')) {
+          overlay.classList.add('show');
+          spawnSakuraPetals();
+          startConfetti();
+        }
+      }
+    }
+
+    /* ================= KELOPAK SAKURA & KILAUAN EMAS ================= */
+    function spawnSakuraPetals() {
+      const container = document.getElementById('petal-container');
+      if (!container || container.children.length > 0) return;
+
+      for (let i = 0; i < 28; i++) {
+        const petal = document.createElement('div');
+        petal.className = 'petal-particle';
+        petal.style.left = `${Math.random() * 100}vw`;
+        petal.style.animationDuration = `${5 + Math.random() * 6}s`;
+        petal.style.animationDelay = `${Math.random() * 4}s`;
+        const size = 14 + Math.random() * 14;
+        const isGold = i % 3 === 0;
+        petal.innerHTML = isGold
+          ? `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="#f9e5a8"><polygon points="12,2 15,9 22,12 15,15 12,22 9,15 2,12 9,9"/></svg>`
+          : `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="#ff8fab"><path d="M12 2C8 7 4 11 12 22C20 11 16 7 12 2Z"/></svg>`;
+        container.appendChild(petal);
+      }
+    }
+
+    function switchView(mode) {
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      document.querySelectorAll('.dev-btn').forEach(b => b.classList.remove('active'));
+
+      const targetView = document.getElementById(`${mode}-view`);
+      const targetTab = document.getElementById(`tab-${mode}`);
+      if (targetView) targetView.classList.add('active');
+      if (targetTab) targetTab.classList.add('active');
+    }
+
+    /* ================= QR CODE GENERATOR ================= */
+    function generateGuestQR() {
+      const container = document.getElementById('qr-container');
+      if (!container) return;
+      try {
+        const url = new URL(window.location.href);
+        url.searchParams.set('mode', 'guest');
+        const guestUrl = url.toString();
+
+        if (typeof qrcode !== 'undefined') {
+          const qr = qrcode(0, 'M');
+          qr.addData(guestUrl);
+          qr.make();
+          container.innerHTML = qr.createSvgTag({ scalable: true, margin: 0 });
+        } else {
+          container.innerHTML = `<div style="font-size:10px;color:#06140e;font-weight:700;">Imbas Pautan Tetamu</div>`;
+        }
+      } catch (e) {
+        container.innerHTML = `<div style="font-size:10px;color:#06140e;font-weight:700;">QR Tetamu</div>`;
+      }
+    }
+
+    /* ================= AMBIENT BOKEH & CONFETTI ================= */
+    function initAmbientBokeh() {
+      const canvas = document.getElementById('ambient-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      let width = canvas.width = window.innerWidth;
+      let height = canvas.height = window.innerHeight;
+
+      window.addEventListener('resize', () => {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+      });
+
+      const particles = Array.from({ length: 36 }, () => ({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        r: 1.5 + Math.random() * 3.5,
+        vy: -0.15 - Math.random() * 0.35,
+        vx: (Math.random() - 0.5) * 0.2,
+        alpha: 0.15 + Math.random() * 0.45
+      }));
+
+      function draw() {
+        ctx.clearRect(0, 0, width, height);
+        particles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          if (p.y < -10) p.y = height + 10;
+          if (p.x < -10) p.x = width + 10;
+          if (p.x > width + 10) p.x = -10;
+
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(249, 229, 168, ${p.alpha})`;
+          ctx.fill();
+        });
+        requestAnimationFrame(draw);
+      }
+      draw();
+    }
+
+    let confettiAnimId = null;
+    function startConfetti() {
+      const canvas = document.getElementById('confetti-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      let width = canvas.width = window.innerWidth;
+      let height = canvas.height = window.innerHeight;
+
+      const colors = ['#f9e5a8', '#d4af37', '#95d63b', '#ff6b85', '#ffffff'];
+      const pieces = Array.from({ length: 130 }, () => ({
+        x: Math.random() * width,
+        y: Math.random() * height - height,
+        w: 7 + Math.random() * 7,
+        h: 4 + Math.random() * 5,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        vy: 2.2 + Math.random() * 3.5,
+        vx: (Math.random() - 0.5) * 2.5,
+        rot: Math.random() * 360,
+        vRot: (Math.random() - 0.5) * 8
+      }));
+
+      function render() {
+        ctx.clearRect(0, 0, width, height);
+        pieces.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.rot += p.vRot;
+          if (p.y > height + 20) {
+            p.y = -20;
+            p.x = Math.random() * width;
+          }
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate((p.rot * Math.PI) / 180);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+          ctx.restore();
+        });
+        confettiAnimId = requestAnimationFrame(render);
+      }
+      if (confettiAnimId) cancelAnimationFrame(confettiAnimId);
+      render();
+    }
+
+    function stopConfetti() {
+      if (confettiAnimId) {
+        cancelAnimationFrame(confettiAnimId);
+        confettiAnimId = null;
+      }
+      const canvas = document.getElementById('confetti-canvas');
+      if (canvas) {
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+
+    /* ================= INITIALIZATION ================= */
+    window.addEventListener('DOMContentLoaded', () => {
+      loadState();
+      generateGuestQR();
+      initAmbientBokeh();
+
+      // Check URL ?mode=stage | guest | vip
+      const params = new URLSearchParams(window.location.search);
+      const mode = params.get('mode');
+      if (mode && ['stage', 'guest', 'vip'].includes(mode)) {
+        switchView(mode);
+        document.getElementById('dev-bar').classList.add('hidden');
+      }
+
+      updateUI(0);
+    });
+  </script>
+</body>
+</html>
